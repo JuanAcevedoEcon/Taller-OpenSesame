@@ -1,0 +1,177 @@
+---
+API: 2.1
+OpenSesame: 3.3.8
+Platform: nt
+---
+set width 1024
+set uniform_coordinates yes
+set title "Nuevo experimento"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend psycho
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground black
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "C:/Users/57317/Desktop/Universidad Nacional/Programación/OpenSesame"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set background white
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Corre un número de objetos en secuencia"
+	run new_form_text_display always
+	run new_loop always
+
+define feedback new_feedback
+	set reset_variables yes
+	set duration keypress
+	set description "Proporciona feedback al participante"
+	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=no font_size=42 html=yes show_if=always text="[mensaje]<br /><br />Tu tiempo promedio de respuesta fue [segundos] s.<br /><br />Su porcentaje de acierto fue [acc] %." x=0 y=0 z_index=0
+
+define form_text_display new_form_text_display
+	set timeout infinite
+	set spacing 10
+	set rows "1;4;1"
+	set only_render no
+	set ok_text "Vamos!"
+	set margins "50;50;50;50"
+	set form_title Preguntas
+	__form_text__
+	A continuación se presentará una series de preguntas cerradas, es decir, solamente podrá responder con sí o no:
+	
+	Si considera que la respuesta es sí:
+	    -> Presione la letra S del teclado.
+	    
+	Si considera que la respuesta es no:
+	    -> Presione la letra N del teclado.
+	__end__
+	set description "A simple text display form"
+	set cols "1;1;1"
+	set _theme gray
+	widget 0 0 3 1 label text="[form_title]"
+	widget 0 1 3 1 label center=no text="[form_text]"
+	widget 1 2 1 1 button text="[ok_text]"
+
+
+define inline_script new_inline_script
+	set description "Executes Python code"
+	___run__
+	exp.set("segundos",self.get("avg_rt")/1000)
+	
+	
+	if self.get("acc") == 100:
+	     exp.set("mensaje","Excelente, lo has hecho bien!")
+	 #Sí la persona tiene 2/2:
+	 # Escribirle un mensaje felicitándolo
+	elif self.get("acc") == 50:
+	     exp.set("mensaje","Muy bien")
+	 #Entonces sí la persona tiene 1/2:
+	 # Escribirle un mensaje vas bien
+	else:
+	    exp.set("mensaje","Vamos, puedes hacerlo mejor!")
+	  #Entonces si no se cumple ninguna, es decir: la persona tiene 0/2:
+	 # Escribirle un mensaje puedes mejorar
+	__end__
+	set _prepare ""
+
+define keyboard_response new_keyboard_response
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Recoge respuestas de teclado"
+	set correct_response s
+	set allowed_responses "s;n"
+
+define keyboard_response new_keyboard_response_1
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Recoge respuestas de teclado"
+	set correct_response n
+	set allowed_responses "s;n"
+
+define loop new_loop
+	set source table
+	set repeat 2
+	set order random
+	set description "Corre otro objeto de forma repetida"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 empty_column ""
+	run new_sequence
+
+define sequence new_sequence
+	set flush_keyboard yes
+	set description "Corre un número de objetos en secuencia"
+	run new_sketchpad always
+	run new_keyboard_response always
+	run new_synth "[correct]=0"
+	run new_sketchpad_1 always
+	run new_keyboard_response_1 always
+	run new_synth_1 "[correct]=0"
+	run new_inline_script always
+	run new_feedback always
+
+define sketchpad new_sketchpad
+	set duration 100
+	set description "Muestra estímulos"
+	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=no font_size=42 html=yes show_if=always text="¿Facebook es azul debido a que Mark Zuckerberg es daltónico?" x=0 y=0 z_index=0
+
+define sketchpad new_sketchpad_1
+	set duration 100
+	set description "Muestra estímulos"
+	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=no font_size=42 html=yes show_if=always text="2 + 2 = 5" x=0 y=0 z_index=0
+
+define synth new_synth
+	set volume 1
+	set pan 0
+	set osc sine
+	set length 100
+	set freq 440
+	set duration sound
+	set description "Un sintetizador de sonido básico"
+	set decay 5
+	set attack 0
+
+define synth new_synth_1
+	set volume 1
+	set pan 0
+	set osc saw
+	set length 100
+	set freq 100
+	set duration sound
+	set description "Un sintetizador de sonido básico"
+	set decay 5
+	set attack 0
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Muestra estímulos"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.3 <i>Lentiform Loewenfeld</i>" x=0 y=0 z_index=0
+
