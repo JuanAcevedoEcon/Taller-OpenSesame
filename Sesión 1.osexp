@@ -26,6 +26,7 @@ set font_size 18
 set font_italic no
 set font_family "Times New Roman"
 set font_bold no
+set experiment_path "C:/Users/57317/Desktop/Universidad Nacional/Programación/OpenSesame/Taller"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -45,7 +46,7 @@ define feedback new_feedback
 	set reset_variables yes
 	set duration keypress
 	set description "Proporciona feedback al participante"
-	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=yes font_size=48 html=yes show_if=always text="Tu tiempo promedio de respuesta fue [avg_rt] ms." x=0.0 y=-128.0 z_index=0
+	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=yes font_size=48 html=yes show_if=always text="Tu tiempo promedio de respuesta fue [avg_rt] ms." x=0 y=-128 z_index=0
 	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=yes font_size=48 html=yes show_if=always text="Su porcentaje de acierto fue [acc] %." x=0 y=64 z_index=0
 
 define form_text_display new_form_text_display
@@ -105,8 +106,10 @@ define sequence new_sequence
 	set description "Corre un número de objetos en secuencia"
 	run new_sketchpad always
 	run new_keyboard_response always
+	run new_synth "[correct]=0"
 	run new_sketchpad_1 always
 	run new_keyboard_response_1 always
+	run new_synth_1 "[correct]=0"
 	run new_feedback always
 
 define sketchpad new_sketchpad
@@ -118,4 +121,26 @@ define sketchpad new_sketchpad_1
 	set duration 100
 	set description "Muestra estímulos"
 	draw textline center=1 color=black font_bold=yes font_family="Times New Roman" font_italic=yes font_size=48 html=yes show_if=always text="2 + 2 = 5" x=0 y=0 z_index=0
+
+define synth new_synth
+	set volume 1
+	set pan 0
+	set osc white_noise
+	set length 100
+	set freq 420
+	set duration sound
+	set description "Un sintetizador de sonido básico"
+	set decay 5
+	set attack 0
+
+define synth new_synth_1
+	set volume 1
+	set pan 0
+	set osc saw
+	set length 100
+	set freq 440
+	set duration sound
+	set description "Un sintetizador de sonido básico"
+	set decay 5
+	set attack 0
 
